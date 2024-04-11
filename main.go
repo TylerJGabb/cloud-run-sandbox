@@ -38,7 +38,7 @@ func handler(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 	http.HandleFunc("/", handler)
-	print("Server starting at port 8080")
+	fmt.Printf("Server starting at port 8080\n")
 	panic(http.ListenAndServe(":8080", nil))
 }
 
