@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 
@@ -13,7 +13,7 @@ import (
 
 func handler(w http.ResponseWriter, req *http.Request) {
 	sd := storagedata.StorageObjectData{}
-	bytes, err := ioutil.ReadAll(req.Body)
+	bytes, err := io.ReadAll(req.Body)
 	fmt.Printf("Received event: %v\n", string(bytes))
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
@@ -33,8 +33,18 @@ func handler(w http.ResponseWriter, req *http.Request) {
 	fmt.Printf("Bucket: %v\n", sd.Bucket)
 	fmt.Printf("Name: %v\n", sd.Name)
 	fmt.Printf("Id: %v\n", sd.Id)
+
+	// print the contents of the file /gcs/${name}
+
+	data, err := os.ReadFile("/gcs/" + sd.Name)
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	fmt.Printf("Contents: %v\n", string(data))
 	w.WriteHeader(http.StatusOK)
-	
 }
 
 func main() {
