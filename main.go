@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/googleapis/google-cloudevents-go/cloud/storagedata"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -38,7 +39,11 @@ func handler(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 	http.HandleFunc("/", handler)
-	fmt.Printf("Server starting at port 8080\n")
-	panic(http.ListenAndServe(":8080", nil))
+	port, ok := os.LookupEnv("PORT")
+	if !ok {
+		port = "8080"
+	}
+	fmt.Printf("Server starting at port %s\n", port)
+	panic(http.ListenAndServe(":" + port, nil))
 }
 
