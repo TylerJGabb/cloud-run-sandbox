@@ -12,16 +12,18 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-/* TODO: build some sort of logger that extracts the tract id
-   Derive the traceID associated with the current request.
-   var trace string
-   if projectID != "" {
-           traceHeader := r.Header.Get("X-Cloud-Trace-Context")
-           traceParts := strings.Split(traceHeader, "/")
-           if len(traceParts) > 0 && len(traceParts[0]) > 0 {
-                   trace = fmt.Sprintf("projects/%s/traces/%s", projectID, traceParts[0])
-           }
-   }
+/*
+TODO: build some sort of logger that extracts the tract id
+
+	Derive the traceID associated with the current request.
+	var trace string
+	if projectID != "" {
+	        traceHeader := r.Header.Get("X-Cloud-Trace-Context")
+	        traceParts := strings.Split(traceHeader, "/")
+	        if len(traceParts) > 0 && len(traceParts[0]) > 0 {
+	                trace = fmt.Sprintf("projects/%s/traces/%s", projectID, traceParts[0])
+	        }
+	}
 */
 type Entry struct {
 	Message  string `json:"message"`
@@ -45,17 +47,17 @@ func (e Entry) String() string {
 }
 
 func Error(m string) {
-	e := Entry{ Message: m, Severity: "ERROR"}
+	e := Entry{Message: m, Severity: "ERROR"}
 	log.Println(e.String())
 }
 
 func Info(m string) {
-	e := Entry{ Message: m }
+	e := Entry{Message: m}
 	log.Println(e.String())
 }
 
 func Warn(m string) {
-	e := Entry{ Message: m, Severity: "WARNING"}
+	e := Entry{Message: m, Severity: "WARNING"}
 	log.Println(e.String())
 }
 
@@ -64,7 +66,7 @@ func handler(w http.ResponseWriter, req *http.Request) {
 	bytes, err := io.ReadAll(req.Body)
 	Info(fmt.Sprintf("Received event: %v\n", string(bytes)))
 	if err != nil {
-    errMsg := fmt.Sprintf("Failed to read request body: %v", err)
+		errMsg := fmt.Sprintf("Failed to read request body: %v", err)
 		Error(errMsg)
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(errMsg))
@@ -72,7 +74,7 @@ func handler(w http.ResponseWriter, req *http.Request) {
 	}
 	defer req.Body.Close()
 	if err := protojson.Unmarshal(bytes, &sd); err != nil {
-    errMsg := fmt.Sprintf("Failed to unmarshal request body: %v", err)
+		errMsg := fmt.Sprintf("Failed to unmarshal request body: %v", err)
 		Error(errMsg)
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(errMsg))
@@ -101,6 +103,7 @@ func handler(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
+	log.SetFlags(0)
 	http.HandleFunc("/", handler)
 	port, ok := os.LookupEnv("PORT")
 	if !ok {
