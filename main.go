@@ -48,18 +48,45 @@ func (e Entry) String() string {
 	return string(out)
 }
 
-func (l Logger) Error(m string) {
-	e := Entry{Message: m, Severity: "ERROR", Trace: l.Trace}
+func KeyValuesToJsonPayload(keyValue ...any) map[string]any {
+	var key string
+	result := map[string]any{}
+	for idx, item := range keyValue {
+		if idx%2 == 0 {
+			key = item.(string)
+		} else {
+			result[key] = item
+		}
+	}
+	return result
+}
+
+func (l Logger) Error(m string, keyValues ...interface{}) {
+	e := Entry{
+		Message:     m,
+		Severity:    "ERROR",
+		Trace:       l.Trace,
+		JsonPayload: KeyValuesToJsonPayload(keyValues...),
+	}
 	log.Println(e.String())
 }
 
-func (l Logger) Info(m string) {
-	e := Entry{Message: m, Trace: l.Trace}
+func (l Logger) Info(m string, keyValues ...interface{}) {
+	e := Entry{
+		Message:     m,
+		Trace:       l.Trace,
+		JsonPayload: KeyValuesToJsonPayload(keyValues...),
+	}
 	log.Println(e.String())
 }
 
-func (l Logger) Warn(m string) {
-	e := Entry{Message: m, Severity: "WARNING", Trace: l.Trace}
+func (l Logger) Warn(m string, keyValues ...interface{}) {
+	e := Entry{
+		Message:     m,
+		Severity:    "WARNING",
+		Trace:       l.Trace,
+		JsonPayload: KeyValuesToJsonPayload(keyValues...),
+	}
 	log.Println(e.String())
 }
 
@@ -110,9 +137,11 @@ func handler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// print the data
-	logger.Info(fmt.Sprintf("Bucket: %v", sd.Bucket))
-	logger.Info(fmt.Sprintf("Name: %v", sd.Name))
-	logger.Info(fmt.Sprintf("Id: %v", sd.Id))
+	logger.Info("Item Summary",
+		"Bucket", sd.Bucket,
+		"Name", sd.Name,
+		"Id", sd.Id,
+	)
 
 	// print the contents of the file /gcs/${name}
 
