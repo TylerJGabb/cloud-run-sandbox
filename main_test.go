@@ -4,9 +4,9 @@ import (
 	"testing"
 )
 
-func TestKeyValuesToJsonPayload(t *testing.T) {
+func TestKeyValuesToExtras(t *testing.T) {
 	keyValue := []any{"key1", "value1", "key2", "value2"}
-	result := KeyValuesToJsonPayload(keyValue...)
+	result := KeyValuesToExtras(keyValue...)
 	// Output:
 	// map[key1:value1 key2:value2]
 	if len(result) != 2 {
@@ -20,9 +20,9 @@ func TestKeyValuesToJsonPayload(t *testing.T) {
 	}
 }
 
-func TestKeyValuesToJsonPayloadWithEmpty(t *testing.T) {
+func TestKeyValuesToExtrasWithEmpty(t *testing.T) {
 	keyValue := []any{}
-	result := KeyValuesToJsonPayload(keyValue...)
+	result := KeyValuesToExtras(keyValue...)
 	// Output:
 	// map[]
 	if len(result) != 0 {
@@ -30,9 +30,9 @@ func TestKeyValuesToJsonPayloadWithEmpty(t *testing.T) {
 	}
 }
 
-func TestKeyValuesToJsonPayloadWithOneItem(t *testing.T) {
+func TestKeyValuesToExtrasWithOneItem(t *testing.T) {
 	keyValue := []any{"key1"}
-	result := KeyValuesToJsonPayload(keyValue...)
+	result := KeyValuesToExtras(keyValue...)
 	// Output:
 	// map[key1:value1]
 	if len(result) != 0 {

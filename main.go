@@ -29,15 +29,11 @@ type Entry struct {
 	Message  string `json:"message"`
 	Severity string `json:"severity,omitempty"`
 	Trace    string `json:"logging.googleapis.com/trace,omitempty"`
-
-	JsonPayload map[string]interface{} `json:"jsonPayload,omitempty"`
-
-	// Logs Explorer allows filtering and display of this as `jsonPayload.component`.
-	Component string `json:"component,omitempty"`
+	Extras map[string]interface{} `json:"extra,omitempty"`
 }
 
-// String renders an entry structure to the JSON format expected by Cloud Logging.
-func (e Entry) String() string {
+// ToJson renders an entry structure to the JSON format expected by Cloud Logging.
+func (e Entry) ToJson() string {
 	if e.Severity == "" {
 		e.Severity = "INFO"
 	}
@@ -48,7 +44,7 @@ func (e Entry) String() string {
 	return string(out)
 }
 
-func KeyValuesToJsonPayload(keyValue ...any) map[string]any {
+func KeyValuesToExtras(keyValue ...any) map[string]any {
 	var key string
 	result := map[string]any{}
 	for idx, item := range keyValue {
@@ -66,18 +62,18 @@ func (l Logger) Error(m string, keyValues ...interface{}) {
 		Message:     m,
 		Severity:    "ERROR",
 		Trace:       l.Trace,
-		JsonPayload: KeyValuesToJsonPayload(keyValues...),
+		Extras: KeyValuesToExtras(keyValues...),
 	}
-	log.Println(e.String())
+	log.Println(e.ToJson())
 }
 
 func (l Logger) Info(m string, keyValues ...interface{}) {
 	e := Entry{
 		Message:     m,
 		Trace:       l.Trace,
-		JsonPayload: KeyValuesToJsonPayload(keyValues...),
+		Extras: KeyValuesToExtras(keyValues...),
 	}
-	log.Println(e.String())
+	log.Println(e.ToJson())
 }
 
 func (l Logger) Warn(m string, keyValues ...interface{}) {
@@ -85,9 +81,9 @@ func (l Logger) Warn(m string, keyValues ...interface{}) {
 		Message:     m,
 		Severity:    "WARNING",
 		Trace:       l.Trace,
-		JsonPayload: KeyValuesToJsonPayload(keyValues...),
+		Extras: KeyValuesToExtras(keyValues...),
 	}
-	log.Println(e.String())
+	log.Println(e.ToJson())
 }
 
 type Logger struct {
