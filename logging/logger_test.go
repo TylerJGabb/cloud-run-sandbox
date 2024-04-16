@@ -1,4 +1,4 @@
-package main
+package logging
 
 import (
 	"testing"
@@ -6,7 +6,7 @@ import (
 
 func TestKeyValuesToExtras(t *testing.T) {
 	keyValue := []any{"key1", "value1", "key2", "value2"}
-	result := KeyValuesToExtras(keyValue...)
+	result := keyValuesToExtras(keyValue...)
 	// Output:
 	// map[key1:value1 key2:value2]
 	if len(result) != 2 {
@@ -22,7 +22,7 @@ func TestKeyValuesToExtras(t *testing.T) {
 
 func TestKeyValuesToExtrasWithEmpty(t *testing.T) {
 	keyValue := []any{}
-	result := KeyValuesToExtras(keyValue...)
+	result := keyValuesToExtras(keyValue...)
 	// Output:
 	// map[]
 	if len(result) != 0 {
@@ -32,7 +32,7 @@ func TestKeyValuesToExtrasWithEmpty(t *testing.T) {
 
 func TestKeyValuesToExtrasWithOneItem(t *testing.T) {
 	keyValue := []any{"key1"}
-	result := KeyValuesToExtras(keyValue...)
+	result := keyValuesToExtras(keyValue...)
 	// Output:
 	// map[key1:value1]
 	if len(result) != 0 {
