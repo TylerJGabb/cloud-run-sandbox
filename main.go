@@ -1,7 +1,7 @@
 package main
 
 import (
-	c "cloud-run-sandbox/config"
+	"cloud-run-sandbox/config"
 	"cloud-run-sandbox/http_handlers"
 	"cloud-run-sandbox/middleware"
 	"cloud-run-sandbox/server"
@@ -9,17 +9,20 @@ import (
 	"net/http"
 )
 
+func init() {
+	// TODO: just use fmt.Println, don't use log
+	log.SetFlags(0)
+}
+
 func main() {
 	// TODO: create a context and pass it down properly
-	log.SetFlags(0)
-	if err := c.Load(); err != nil {
-		log.Fatalf("Failed to load configuration: %v", err)
+	cfg, err := config.Load()
+	if err != nil {
 		panic(err)
 	}
-	// TODO: abstract initializer that can take any App interface
 	app := server.NewAppServer()
-	app.Use(middleware.InjectLogger)
-	app.Use(middleware.SayHelloWithLogger)
+	app.Use(middleware.WithTraceLogger(cfg.ProjectId))
+	app.Use(middleware.SayHelloWithTraceLogger)
 	app.Handle("/", http.HandlerFunc(http_handlers.GetFileContents))
-	app.Start(":8080")
+	app.Start(":" + cfg.Port)
 }

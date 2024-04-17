@@ -33,7 +33,7 @@ func GetFunctionName(i interface{}) string {
 	return runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
 }
 
-var logger = logging.Logger{}
+
 func (as AppServer) Start(addr string) {
 	mux := http.NewServeMux()
 	// Why do we call in reverse?
@@ -50,10 +50,10 @@ func (as AppServer) Start(addr string) {
 		return next
 	}
 	for pattern, handler := range as.handles {
-		logger.Debug(fmt.Sprintf("Adding Handler for %s, %s", pattern, GetFunctionName(handler)))
+		logging.SharedLogger.Debug(fmt.Sprintf("Adding Handler for %s, %s", pattern, GetFunctionName(handler)))
 		withMiddleware := chain(handler)
 		mux.Handle(pattern, withMiddleware)
 	}
-	logger.Info("Starting server", "address", addr)
+	logging.SharedLogger.Info("Starting server", "address", addr)
 	http.ListenAndServe(addr, mux)
 }

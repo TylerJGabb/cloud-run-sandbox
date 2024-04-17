@@ -2,7 +2,7 @@ FROM golang:1.22 as builder
 ENV CGO_ENABLED=0
 
 WORKDIR /build
-COPY main.go go.* ./
+COPY . .
 RUN go mod download
 RUN go build -o app
 

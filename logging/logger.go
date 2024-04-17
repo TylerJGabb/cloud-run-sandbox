@@ -13,6 +13,8 @@ type Entry struct {
 }
 
 type Logger struct {
+	// TODO: pass this in when you build a logger through a constructor
+	// Extract an interface!
 	Trace string
 }
 
