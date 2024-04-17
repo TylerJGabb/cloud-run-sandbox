@@ -13,7 +13,7 @@ type Entry struct {
 }
 
 type Logger struct {
-	trace string
+	Trace string
 }
 
 // ToJson renders an entry structure to the JSON format expected by Cloud Logging.
@@ -45,7 +45,7 @@ func (l Logger) Error(m string, keyValues ...interface{}) {
 	e := Entry{
 		Message:     m,
 		Severity:    "ERROR",
-		Trace:       l.trace,
+		Trace:       l.Trace,
 		Extras: keyValuesToExtras(keyValues...),
 	}
 	log.Println(e.ToJson())
@@ -54,7 +54,7 @@ func (l Logger) Error(m string, keyValues ...interface{}) {
 func (l Logger) Info(m string, keyValues ...interface{}) {
 	e := Entry{
 		Message:     m,
-		Trace:       l.trace,
+		Trace:       l.Trace,
 		Extras: keyValuesToExtras(keyValues...),
 	}
 	log.Println(e.ToJson())
@@ -64,7 +64,17 @@ func (l Logger) Warn(m string, keyValues ...interface{}) {
 	e := Entry{
 		Message:     m,
 		Severity:    "WARNING",
-		Trace:       l.trace,
+		Trace:       l.Trace,
+		Extras: keyValuesToExtras(keyValues...),
+	}
+	log.Println(e.ToJson())
+}
+
+func (l Logger) Debug(m string, keyValues ...interface{}) {
+	e := Entry{
+		Message:     m,
+		Severity:    "DEBUG",
+		Trace:       l.Trace,
 		Extras: keyValuesToExtras(keyValues...),
 	}
 	log.Println(e.ToJson())
