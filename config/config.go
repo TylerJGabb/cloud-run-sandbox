@@ -14,6 +14,25 @@ import (
 type Config struct {
 	ProjectId string
 	Port string
+	FilesLocation string
+}
+
+func loadFilesLocation() string {
+	filesLocation, ok := os.LookupEnv("FILES_LOCATION")
+	if !ok {
+		logging.SharedLogger.Warn("FILES_LOCATION was not set, defaulting to '/gcs'")
+		filesLocation = "/gcs"
+	}
+	return filesLocation
+}
+
+func loadPort() string {
+	port, ok := os.LookupEnv("PORT")
+	if !ok {
+		logging.SharedLogger.Warn("PORT was not set, defaulting to 8080")
+		port = "8080"
+	}
+	return port
 }
 
 func loadProjectId() (string, error) {
@@ -36,21 +55,18 @@ func loadProjectId() (string, error) {
 	}
 }
 
-func Load() (*Config, error) {
+func Load() (Config, error) {
 	projectId, err := loadProjectId()
 	if err != nil {
-		return nil, err
-	}
-	port, ok := os.LookupEnv("PORT")
-	if !ok {
-		port = "8080"
+		return Config{}, err
 	}
 	cfg := Config{
-		Port: port,
+		FilesLocation: loadFilesLocation(),
+		Port: loadPort(),
 		ProjectId: projectId,
 	}
 	logging.SharedLogger.Info("Configuration Loaded Successfully", 
 		"config", cfg,
 	)
-	return &cfg, nil
+	return cfg, nil
 }

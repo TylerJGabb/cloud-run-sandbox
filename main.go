@@ -6,7 +6,6 @@ import (
 	"cloud-run-sandbox/middleware"
 	"cloud-run-sandbox/server"
 	"log"
-	"net/http"
 )
 
 func init() {
@@ -23,6 +22,6 @@ func main() {
 	app := server.NewAppServer()
 	app.Use(middleware.WithTraceLogger(cfg.ProjectId))
 	app.Use(middleware.SayHelloWithTraceLogger)
-	app.Handle("/", http.HandlerFunc(http_handlers.GetFileContents))
+	app.Handle("/", http_handlers.NewGetFileContentsHandler(cfg.FilesLocation))
 	app.Start(":" + cfg.Port)
 }

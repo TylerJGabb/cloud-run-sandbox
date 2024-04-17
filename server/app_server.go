@@ -3,10 +3,7 @@ package server
 import (
 	"cloud-run-sandbox/logging"
 	"cloud-run-sandbox/middleware"
-	"fmt"
 	"net/http"
-	"reflect"
-	"runtime"
 )
 
 func NewAppServer() *AppServer {
@@ -29,18 +26,13 @@ func (as AppServer) Handle(pattern string, handler http.Handler) {
 	as.handles[pattern] = handler
 }
 
-func GetFunctionName(i interface{}) string {
-	return runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
-}
-
-
 func (as AppServer) Start(addr string) {
 	mux := http.NewServeMux()
 	// Why do we call in reverse?
 	// When someone adds handlers, they do so in the intuitive order
 	// use(InjectLogger)
 	// use(UseLogger)
-	// but what this would actually look line in-line would be
+	// but what this would actually look like in-line would be
 	// finalHandler := InjectLogger(next=UseLogger(next=theHandler))
 	chain := func(next http.Handler) http.Handler {
 		for i := len(as.middlewares) - 1; i >= 0; i-- {
@@ -50,7 +42,7 @@ func (as AppServer) Start(addr string) {
 		return next
 	}
 	for pattern, handler := range as.handles {
-		logging.SharedLogger.Debug(fmt.Sprintf("Adding Handler for %s, %s", pattern, GetFunctionName(handler)))
+		logging.SharedLogger.Debug("Adding Handler for " + pattern)
 		withMiddleware := chain(handler)
 		mux.Handle(pattern, withMiddleware)
 	}
