@@ -17,31 +17,37 @@ type Config struct {
 	FilesLocation string
 }
 
+const (
+	filesLocationEnvVar = "FILES_LOCATION"
+	portEnvVar = "PORT"
+	googleProjectIdEnvVar = "GOOGLE_PROJECT_ID"
+)
+
 func loadFilesLocation() string {
-	filesLocation, ok := os.LookupEnv("FILES_LOCATION")
+	filesLocation, ok := os.LookupEnv(filesLocationEnvVar)
 	if !ok {
-		logging.SharedLogger.Warn("FILES_LOCATION was not set, defaulting to '/gcs'")
+		logging.SharedLogger.Warn(filesLocationEnvVar + " was not set, defaulting to '/gcs'")
 		filesLocation = "/gcs"
 	}
 	return filesLocation
 }
 
 func loadPort() string {
-	port, ok := os.LookupEnv("PORT")
+	port, ok := os.LookupEnv(portEnvVar)
 	if !ok {
-		logging.SharedLogger.Warn("PORT was not set, defaulting to 8080")
+		logging.SharedLogger.Warn(portEnvVar + " was not set, defaulting to 8080")
 		port = "8080"
 	}
 	return port
 }
 
 func loadProjectId() (string, error) {
-	if projectIdFromEnv, ok := os.LookupEnv("GOOGLE_PROJECT_ID"); ok {
+	if projectIdFromEnv, ok := os.LookupEnv(googleProjectIdEnvVar); ok {
 		return projectIdFromEnv, nil
 	} else {
 		// https://cloud.google.com/run/docs/container-contract#metadata-server
 		// https://pkg.go.dev/cloud.google.com/go/compute/metadata
-		log.Println("GOOGLE_PROJECT_ID is not set, trying to get project ID from metadata server")
+		log.Println(googleProjectIdEnvVar + " is not set, trying to get project ID from metadata server")
 		metadataClient := metadata.NewClient(&http.Client{
 			Timeout: time.Duration(1 * time.Second),
 		})

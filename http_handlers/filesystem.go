@@ -2,6 +2,7 @@ package http_handlers
 
 import (
 	"cloud-run-sandbox/middleware"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -53,9 +54,14 @@ func (h GetFileContentsHandler) ServeHTTP(w http.ResponseWriter, req *http.Reque
 	// print the contents of the file /gcs/${name}
 	data, err := os.ReadFile(h.filesLocation + "/" + sd.Name)
 	if err != nil {
-		logger.Error(fmt.Sprintf("Failed to read file: %v", err))
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		if errors.Is(err, os.ErrNotExist)  {
+			logger.Error(fmt.Sprintf("File not found: %v", err))
+			w.WriteHeader(http.StatusNotFound)
+		} else {
+			logger.Error(fmt.Sprintf("Failed to read file: %v", err))
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
+		}
 		return
 	}
 	logger.Info(fmt.Sprintf("Contents: %v", string(data)))
