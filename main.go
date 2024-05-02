@@ -3,9 +3,11 @@ package main
 import (
 	"cloud-run-sandbox/config"
 	"cloud-run-sandbox/http_handlers"
+	"cloud-run-sandbox/logging"
 	"cloud-run-sandbox/middleware"
 	"cloud-run-sandbox/server"
 	"log"
+	"runtime/debug"
 )
 
 func init() {
@@ -19,6 +21,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	stack := string(debug.Stack())
+	logging.SharedLogger.Info("this is a trace:\n\n" + stack)
 	app := server.NewAppServer()
 	app.Use(middleware.WithTraceLogger(cfg.ProjectId))
 	app.Use(middleware.SayHelloWithTraceLogger)
