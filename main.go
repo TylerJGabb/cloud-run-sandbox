@@ -22,7 +22,7 @@ func main() {
 		panic(err)
 	}
 	stack := string(debug.Stack())
-	logging.SharedLogger.Info("this is a trace:\n\n" + stack)
+	logging.SharedLogger.Info("this is a trace:\n\n"+stack, "stack", stack, "foo", "bar", "number", 1234)
 	app := server.NewAppServer()
 	app.Use(middleware.WithTraceLogger(cfg.ProjectId))
 	app.Use(middleware.SayHelloWithTraceLogger)
