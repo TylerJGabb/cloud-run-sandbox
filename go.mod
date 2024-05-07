@@ -8,4 +8,7 @@ require (
 	google.golang.org/protobuf v1.33.0
 )
 
-require cloud.google.com/go/compute v1.14.0 // indirect
+require (
+	cloud.google.com/go/compute v1.14.0 // indirect
+	github.com/google/uuid v1.6.0 // indirect
+)

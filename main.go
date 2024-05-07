@@ -7,7 +7,11 @@ import (
 	"cloud-run-sandbox/middleware"
 	"cloud-run-sandbox/server"
 	"log"
+	"net/http"
+	"os"
 	"runtime/debug"
+
+	"github.com/google/uuid"
 )
 
 func init() {
@@ -27,5 +31,10 @@ func main() {
 	app.Use(middleware.WithTraceLogger(cfg.ProjectId))
 	app.Use(middleware.SayHelloWithTraceLogger)
 	app.Handle("/", http_handlers.NewGetFileContentsHandler(cfg.FilesLocation))
+	app.Handle("/createFile", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		uid := uuid.New().String()
+		fName := cfg.FilesLocation + "/" + uid
+		os.WriteFile(fName, []byte("Hello, World!"), 0644)
+	}))
 	app.Start(":" + cfg.Port)
 }
