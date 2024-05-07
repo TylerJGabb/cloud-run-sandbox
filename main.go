@@ -35,6 +35,8 @@ func main() {
 		uid := uuid.New().String()
 		fName := cfg.FilesLocation + "/" + uid
 		os.WriteFile(fName, []byte("Hello, World!"), 0644)
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(fName))
 	}))
 	app.Start(":" + cfg.Port)
 }
